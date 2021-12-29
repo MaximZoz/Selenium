@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 browser = webdriver.Chrome()
-link = "http://suninjuly.github.io/math.html"
+link = "http://suninjuly.github.io/get_attribute.html"
 browser.get(link)
 
 
@@ -16,8 +16,8 @@ def calc(str_num):
 try:
 
     # находим число из страницы, подставляем его в формулу
-    x_element = browser.find_element(By.ID, "input_value")
-    x = x_element.text
+    x_element = browser.find_element(By.ID, "treasure")
+    x = x_element.get_attribute("valuex")
     y = calc(x)
 
     # вводим в input то, что получилось
