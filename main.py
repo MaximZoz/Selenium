@@ -4,7 +4,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-link = "http://suninjuly.github.io/alert_accept.html"
+link = "http://suninjuly.github.io/redirect_accept.html"
 browser = webdriver.Chrome()
 browser.get(link)
 
@@ -15,17 +15,17 @@ def calc(str_num):
 
 try:
 
-    # ищем элементы в браузере
 
+    # кликаем на кнопку
     button = browser.find_element(By.TAG_NAME, "[type='submit']")
-
     button.click()
 
+    # переходим на новую вкладку
+    new_window = browser.window_handles[1]
+    browser.switch_to.window(new_window)
 
-    # нажимаем ок на alert
-    alert = browser.switch_to.alert
-    alert.accept()
 
+    # вводим проверку
     x_element = browser.find_element(By.ID, "input_value").text
     answer = browser.find_element(By.ID, "answer")
     y = calc(x_element)
