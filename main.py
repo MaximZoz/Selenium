@@ -1,44 +1,41 @@
-import math
+import os
 import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+link = "http://suninjuly.github.io/file_input.html"
 browser = webdriver.Chrome()
-link = "http://SunInJuly.github.io/execute_script.html"
 browser.get(link)
-
-
-def calc(str_num):
-    return str(math.log(abs(12 * math.sin(int(str_num)))))
-
 
 try:
 
-    # находим число из страницы, подставляем его в формулу
-    x_element = browser.find_element(By.ID, "input_value")
-    x = x_element.text
-    y = calc(x)
-    # вводим в input то, что получилось
-    answer = browser.find_element(By.ID, "answer")
-    browser.execute_script("return arguments[0].scrollIntoView(true);", answer)
-    answer.send_keys(y)
+    # ищем элементы в браузере
+    input1 = browser.find_element(By.XPATH, "//input[@placeholder='Enter first name']")
+    input2 = browser.find_element(By.XPATH, "//input[@placeholder='Enter last name']")
 
-    # отмечаем checkbox "I'm the robot"
-    robotCheckbox = browser.find_element(By.ID, "robotCheckbox")
-    robotCheckbox.click()
+    input3 = browser.find_element(By.XPATH, "//input[@placeholder='Enter email']")
 
-    # выбираем radiobutton "Robots rule!"
-    robotsRule = browser.find_element(By.ID, "robotsRule")
-    robotsRule.click()
+    button = browser.find_element(By.XPATH, "//button[@type='submit' and text()='Submit']")
+    file = browser.find_element(By.ID, "file")
 
-    # кликаем на submit
-    button = browser.find_element(By.TAG_NAME, "[type='submit']")
+    # получаем путь к директории текущего исполняемого файла
+    current_dir = os.path.abspath(os.path.dirname(__file__))
+    file_path = os.path.join(current_dir, 'file.txt')
+
+    # заполняем обязательные поля
+    input1.send_keys("Ivan")
+    input2.send_keys("Petrov")
+    input3.send_keys("Ivan123@gmail.com")
+
+    # прикрепляем файл к форме
+    file.send_keys(file_path)
+
+    # отправляем заполненную форму с файлом
     button.click()
-
 
 finally:
     # ожидание чтобы визуально оценить результаты прохождения скрипта
-    time.sleep(10)
+    time.sleep(5)
     # закрываем браузер после всех манипуляций
     browser.quit()
