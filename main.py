@@ -3,22 +3,24 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+
 try:
-    link = "http://suninjuly.github.io/registration1.html"
+    link = "http://suninjuly.github.io/simple_form_find_task.html"
     browser = webdriver.Chrome()
     browser.get(link)
 
-    # заполняем обязательные поля
-    input1 = browser.find_element(By.XPATH, "//input[@placeholder='Input your first name']")
+    # Ваш код, который заполняет обязательные поля
+    input1 = browser.find_element(By.TAG_NAME, "input")
     input1.send_keys("Ivan")
-    input2 = browser.find_element(By.XPATH, "//input[@placeholder='Input your last name']")
+
+    input2 = browser.find_element(By.NAME, "last_name")
     input2.send_keys("Petrov")
 
-    input3 = browser.find_element(By.XPATH, "//input[@placeholder='Input your email']")
-    input3.send_keys("Ivan123@gmail.com")
+    input3 = browser.find_element(By.CLASS_NAME, "city")
+    input3.send_keys("Smolensk")
 
-    # ожидание чтобы визуально оценить результаты прохождения скрипта
-    time.sleep(5)
+    input4 = browser.find_element(By.ID, "country")
+    input4.send_keys("Russia")
 
     # Отправляем заполненную форму
     button = browser.find_element(By.XPATH, "//button[@type='submit' and text()='Submit']")
@@ -29,7 +31,7 @@ try:
     time.sleep(1)
 
     # находим элемент, содержащий текст
-    welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
+    welcome_text_elt = browser.find_element("h1")
     # записываем в переменную welcome_text текст из элемента welcome_text_elt
     welcome_text = welcome_text_elt.text
 
@@ -38,6 +40,6 @@ try:
 
 finally:
     # ожидание чтобы визуально оценить результаты прохождения скрипта
-    time.sleep(5)
+    time.sleep(10)
     # закрываем браузер после всех манипуляций
     browser.quit()
