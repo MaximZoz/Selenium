@@ -1,42 +1,41 @@
+import math
 import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+browser = webdriver.Chrome()
+link = "http://suninjuly.github.io/math.html"
+browser.get(link)
+
+
+def calc(str_num):
+    return str(math.log(abs(12 * math.sin(int(str_num)))))
+
 
 try:
-    link = "http://suninjuly.github.io/simple_form_find_task.html"
-    browser = webdriver.Chrome()
-    browser.get(link)
 
-    # Ваш код, который заполняет обязательные поля
-    input1 = browser.find_element(By.TAG_NAME, "input")
-    input1.send_keys("Ivan")
+    # находим число из страницы, подставляем его в формулу
+    x_element = browser.find_element(By.ID, "input_value")
+    x = x_element.text
+    y = calc(x)
 
-    input2 = browser.find_element(By.NAME, "last_name")
-    input2.send_keys("Petrov")
+    # вводим в input то, что получилось
+    answer = browser.find_element(By.ID, "answer")
+    answer.send_keys(y)
 
-    input3 = browser.find_element(By.CLASS_NAME, "city")
-    input3.send_keys("Smolensk")
+    # отмечаем checkbox "I'm the robot"
+    robotCheckbox = browser.find_element(By.ID, "robotCheckbox")
+    robotCheckbox.click()
 
-    input4 = browser.find_element(By.ID, "country")
-    input4.send_keys("Russia")
+    # выбираем radiobutton "Robots rule!"
+    robotsRule = browser.find_element(By.ID, "robotsRule")
+    robotsRule.click()
 
-    # Отправляем заполненную форму
-    button = browser.find_element(By.XPATH, "//button[@type='submit' and text()='Submit']")
+    # кликаем на submit
+    button = browser.find_element(By.TAG_NAME, "[type='submit']")
     button.click()
 
-    # Проверяем, что смогли зарегистрироваться
-    # ждем загрузки страницы
-    time.sleep(1)
-
-    # находим элемент, содержащий текст
-    welcome_text_elt = browser.find_element("h1")
-    # записываем в переменную welcome_text текст из элемента welcome_text_elt
-    welcome_text = welcome_text_elt.text
-
-    # с помощью assert проверяем, что ожидаемый текст совпадает с текстом на странице сайта
-    assert "Congratulations! You have successfully registered!" == welcome_text
 
 finally:
     # ожидание чтобы визуально оценить результаты прохождения скрипта
