@@ -3,32 +3,39 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
 
 browser = webdriver.Chrome()
-link = "http://suninjuly.github.io/selects1.html"
+link = "http://SunInJuly.github.io/execute_script.html"
 browser.get(link)
 
 
-def calc_sum(str_num1, str_num2):
-    return str((int(str_num1) + int(str_num2)))
+def calc(str_num):
+    return str(math.log(abs(12 * math.sin(int(str_num)))))
 
 
 try:
-    # получаем числа из span
-    num1 = browser.find_element(By.ID, "num1").text
-    num2 = browser.find_element(By.ID, "num2").text
 
-    # складываем числа
-    res = calc_sum(num1, num2)
+    # находим число из страницы, подставляем его в формулу
+    x_element = browser.find_element(By.ID, "input_value")
+    x = x_element.text
+    y = calc(x)
+    # вводим в input то, что получилось
+    answer = browser.find_element(By.ID, "answer")
+    browser.execute_script("return arguments[0].scrollIntoView(true);", answer)
+    answer.send_keys(y)
 
-    # выбираем мз выпадающего списка это число
-    select = Select(browser.find_element(By.ID, "dropdown"))
-    select.select_by_value(res)
+    # отмечаем checkbox "I'm the robot"
+    robotCheckbox = browser.find_element(By.ID, "robotCheckbox")
+    robotCheckbox.click()
+
+    # выбираем radiobutton "Robots rule!"
+    robotsRule = browser.find_element(By.ID, "robotsRule")
+    robotsRule.click()
 
     # кликаем на submit
     button = browser.find_element(By.TAG_NAME, "[type='submit']")
     button.click()
+
 
 finally:
     # ожидание чтобы визуально оценить результаты прохождения скрипта
