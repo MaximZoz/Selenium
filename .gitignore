@@ -4,3 +4,4 @@
 # исключить из игнора файлик
 !main.py
 !CustomBrowser.py
+!README.md
