@@ -1,30 +1,72 @@
-import math
-import time
+import unittest
 
 from selenium import webdriver
+
+import time
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
-from CustomBrowser import CustomBrowser
+link1 = "http://suninjuly.github.io/registration1.html"
 
-link = "http://suninjuly.github.io/explicit_wait2.html"
-browser = CustomBrowser()
-browser.get(link)
+link2 = "http://suninjuly.github.io/registration2.html"
 
-try:
-    # дожидаемся 12 секунд когда price будет равен 100
-    price = WebDriverWait(browser, 12).until(EC.text_to_be_present_in_element((By.ID, "price"), "$100"))
 
-    # кликаем на кнопку
-    button = browser.find_element(By.ID, "book")
+def test_welcome_text(link):
+    browser = webdriver.Chrome()
+
+    browser.get(link)
+
+    input1 = browser.find_element(By.CLASS_NAME, "first_block .first")
+
+    input1.send_keys("Ivan")
+
+    time.sleep(1)
+
+    input2 = browser.find_element(By.CLASS_NAME, "first_block .second")
+
+    input2.send_keys("Petrov")
+
+    time.sleep(1)
+
+    input3 = browser.find_element(By.CLASS_NAME, "first_block .third")
+
+    input3.send_keys("Smolensk")
+
+    time.sleep(1)  # Отправляем заполненную форму
+
+    button = browser.find_element(By.CSS_SELECTOR, "button.btn")
+
     button.click()
 
-    # вводим проверку
-    browser.solve_captcha()
+    # Проверяем, что смогли зарегистрироваться
 
-finally:
-    # ожидание чтобы визуально оценить результаты прохождения скрипта
-    time.sleep(20)
-    # закрываем браузер после всех манипуляций
-    browser.quit()
+    # ждем загрузки страницы
+
+    time.sleep(3)
+
+    # находим элемент, содержащий текст
+
+    welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
+
+    # записываем в переменную welcome_text текст из элемента welcome_text_elt
+
+    welcome_text = welcome_text_elt.text
+
+    return welcome_text
+
+
+class TestAbs(unittest.TestCase):
+
+    def test_link1(self):
+        welcome_text_link1 = test_welcome_text(link1)
+
+        self.assertEqual(welcome_text_link1, "Congratulations! You have successfully registered!", "link1 NOT ok")
+
+    def test_link2(self):
+        welcome_text_link1 = test_welcome_text(link2)
+
+        self.assertEqual(welcome_text_link1, "Congratulations! You have successfully registered!", "TEST Link 2 NOT OK")
+
+
+if __name__ == "__main__":
+    unittest.main()
