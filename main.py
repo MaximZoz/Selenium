@@ -1,72 +1,68 @@
-import unittest
+import time
+import math
+import pytest
 
 from selenium import webdriver
-
-import time
-
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-link1 = "http://suninjuly.github.io/registration1.html"
-
-link2 = "http://suninjuly.github.io/registration2.html"
-
-
-def test_welcome_text(link):
-    browser = webdriver.Chrome()
-
-    browser.get(link)
-
-    input1 = browser.find_element(By.CLASS_NAME, "first_block .first")
-
-    input1.send_keys("Ivan")
-
-    time.sleep(1)
-
-    input2 = browser.find_element(By.CLASS_NAME, "first_block .second")
-
-    input2.send_keys("Petrov")
-
-    time.sleep(1)
-
-    input3 = browser.find_element(By.CLASS_NAME, "first_block .third")
-
-    input3.send_keys("Smolensk")
-
-    time.sleep(1)  # Отправляем заполненную форму
-
-    button = browser.find_element(By.CSS_SELECTOR, "button.btn")
-
-    button.click()
-
-    # Проверяем, что смогли зарегистрироваться
-
-    # ждем загрузки страницы
-
-    time.sleep(3)
-
-    # находим элемент, содержащий текст
-
-    welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
-
-    # записываем в переменную welcome_text текст из элемента welcome_text_elt
-
-    welcome_text = welcome_text_elt.text
-
-    return welcome_text
+# Список ссылок на тестируемые страницы
+links = [
+    'https://stepik.org/lesson/236895/step/1',
+    'https://stepik.org/lesson/236896/step/1',
+    'https://stepik.org/lesson/236897/step/1',
+    'https://stepik.org/lesson/236898/step/1',
+    'https://stepik.org/lesson/236899/step/1',
+    'https://stepik.org/lesson/236903/step/1',
+    'https://stepik.org/lesson/236904/step/1',
+    'https://stepik.org/lesson/236905/step/1'
+]
 
 
-class TestAbs(unittest.TestCase):
-
-    def test_link1(self):
-        welcome_text_link1 = test_welcome_text(link1)
-
-        self.assertEqual(welcome_text_link1, "Congratulations! You have successfully registered!", "link1 NOT ok")
-
-    def test_link2(self):
-        welcome_text_link1 = test_welcome_text(link2)
-
-        self.assertEqual(welcome_text_link1, "Congratulations! You have successfully registered!", "TEST Link 2 NOT OK")
+@pytest.fixture(scope='function')
+def answer():
+    """
+    Фистура применяется к функции теста.
+    :return: Возвращает результат формулы math.log(int(time.time()))
+    :rtype: str
+    """
+    return str(math.log(int(time.time())))
 
 
-if __name__ == "__main__":
-    unittest.main()
+class Test_Stepik:
+
+    @classmethod
+    def setup_class(cls):
+        """
+        Метод класса инициализирует вебдрайвер.
+        Устанавливает неявное ожидание
+        """
+        cls.browser = webdriver.Chrome()
+        cls.browser.implicitly_wait(5)
+
+    @classmethod
+    def teardown_class(cls):
+        """
+        Метод класса закрывает браузер
+        """
+        cls.browser.quit()
+
+    @pytest.mark.parametrize('link', links)
+    def test_stepik(self, link, answer):
+        result = ""
+        browser = self.browser
+        # Открывает страницу
+        browser.get(link)
+        # Ожидает появления элемента с тегом "textarea"
+        textarea = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "textarea"))
+        )
+        # Передаем ответ из фикстуры answer в поле ввода
+        textarea.send_keys(answer)
+        # Нажимаем кнопку
+        browser.find_element_by_css_selector('button.submit-submission ').click()
+        # Получаем текст элемента, подтверждающего правильность ответа
+        feedback = browser.find_element_by_css_selector('pre.smart-hints__hint').text
+        # Проверяем ответ
+        assert feedback == 'Correct!', f'Error: {feedback}'
